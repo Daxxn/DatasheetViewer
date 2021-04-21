@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icons\SearchIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Syncfusion.Pdf.Wpf" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.PdfViewer.WPF" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.Themes.FluentDark.WPF" Version="19.1.0.57" />
+    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="19.1.0.57" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\JsonReaderLibrary\JsonReaderLibrary\JsonReaderLibrary.csproj" />
+    <ProjectReference Include="..\..\Libraries\MVVMLibrary\MVVMLibrary\MVVMLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\SearchIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>

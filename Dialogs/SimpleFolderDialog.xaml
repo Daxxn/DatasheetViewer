@@ -1,0 +1,36 @@
+﻿<Window x:Class="DatasheetViewer.Dialogs.SimpleFolderDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DatasheetViewer.Dialogs"
+        xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard"
+        mc:Ignorable="d"
+        
+        Title="Simple Folder Dialog" Height="100" Width="300">
+    <!--<Window.InputBindings>
+        <KeyBinding Changed="KeyBinding_Changed" Command="ApplicationCommands.Paste" Key="V" Modifiers="Ctrl"/>
+    </Window.InputBindings>-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0">Enter a directory:</TextBlock>
+        <TextBox x:Name="PathTextBox" GotKeyboardFocus="PathTextBox_GotKeyboardFocus" Grid.Row="1" Text="{Binding Path=Path}">
+            <TextBox.ContextMenu>
+                <ContextMenu ItemsSource="{Binding Path=PreviousPaths}"/>
+            </TextBox.ContextMenu>
+        </TextBox>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Click="Close_Click">Cancel</Button>
+            <Button Grid.Column="1" Command="{Binding Path=SaveCmd}">Select</Button>
+        </Grid>
+    </Grid>
+</Window>
