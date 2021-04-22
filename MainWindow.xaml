@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:DatasheetViewer"
         xmlns:pdf="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
         mc:Ignorable="d"
+        WindowState="Maximized"
         Title="Datasheets" Height="450" Width="800">
     <Window.InputBindings>
         <KeyBinding Command="{Binding Path=SaveDatasheetMetafileCmd}" Key="S" Modifiers="Ctrl"/>

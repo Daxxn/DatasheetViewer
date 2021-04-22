@@ -64,6 +64,29 @@ namespace DatasheetViewer.Models
 
          return Name.Contains(searchText) || searchText.Contains(Name) || PartName.Contains(searchText);
       }
+
+      public void RenameFile()
+      {
+         if (!Name.Contains(PartName))
+         {
+            StringBuilder sb = new(Name);
+            if (Tags is not null && Tags.Count > 0)
+            {
+               sb.Append(_nameDelimiter[0]);
+               for (int i = 0; i < Tags.Count; i++)
+               {
+                  sb.Append(Tags[i].Name);
+                  if (i != Tags.Count - 1)
+                  {
+                     sb.Append(_tagDelimiters[0]);
+                  }
+               }
+            }
+
+            var dir = Path.GetRelativePath(FilePath, Name);
+            File.Move(FilePath, Path.Combine(dir, sb.ToString()));
+         }
+      }
       #endregion
 
       #region - Full Properties

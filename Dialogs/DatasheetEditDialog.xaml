@@ -5,8 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DatasheetViewer.Dialogs"
         mc:Ignorable="d"
-        Title="DatasheetEditDialog" Height="450" Width="800">
+        Title="DatasheetEditDialog" Height="550" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0">
+            <Grid>
+                
+            </Grid>
+        </Border>
+
+        <DataGrid Grid.Column="1" ItemsSource="{Binding Path=Datasheets}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Part Name" Binding="{Binding Path=PartName}"/>
+                <DataGridTextColumn Header="Desc" Binding="{Binding Path=Description}"/>
+                <DataGridTextColumn Header="Desc" Binding="{Binding Path=TagNames}"/>
+                <DataGridTextColumn Header="Desc" Binding="{Binding Path=FileName}"/>
+                
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
