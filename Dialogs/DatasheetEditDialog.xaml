@@ -6,6 +6,10 @@
         xmlns:local="clr-namespace:DatasheetViewer.Dialogs"
         mc:Ignorable="d"
         Title="DatasheetEditDialog" Height="550" Width="800">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=SaveCmd}" Changed="SaveAndClose_Changed" Key="Return"/>
+        <KeyBinding Command="{Binding Path=SaveCmd}" Key="Return" Modifiers="Shift"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,8 +30,21 @@
 
                 <Button Grid.Column="0" MinWidth="200" Click="Cancel_Click">Cancel</Button>
                 <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <Button MinWidth="200" Command="{Binding Path=SaveCmd}">Save</Button>
-                    <Button MinWidth="200" Command="{Binding Path=SaveCmd}" Click="Cancel_Click">Save and Close</Button>
+                    <Button
+                        MinWidth="100"
+                        Command="{Binding Path=SaveCmd}"
+                        ToolTip="(Shift + Enter)"
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        MinWidth="100"
+                        Command="{Binding Path=SaveCmd}"
+                        Click="Cancel_Click"
+                        ToolTip="(Enter)"
+                    >
+                        Save and Close
+                    </Button>
                 </StackPanel>
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Path=RootDir}"/>
             </Grid>

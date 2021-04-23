@@ -33,5 +33,10 @@ namespace DatasheetViewer.Dialogs
       {
          Close();
       }
+
+      private void SaveAndClose_Changed(object sender, EventArgs e)
+      {
+         Close();
+      }
    }
 }
