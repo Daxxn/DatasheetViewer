@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DatasheetViewer.ViewModels;
+using Syncfusion.SfSkinManager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +23,15 @@ namespace DatasheetViewer.Dialogs
    {
       public DatasheetEditDialog()
       {
+         SfSkinManager.SetTheme(this, new Theme("FluentDark"));
+
+         DataContext = MainViewModel.EditVM;
          InitializeComponent();
+      }
+
+      private void Cancel_Click(object sender, RoutedEventArgs e)
+      {
+         Close();
       }
    }
 }

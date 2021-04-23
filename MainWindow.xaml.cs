@@ -54,7 +54,7 @@ namespace DatasheetViewer
          "PART_ComboBoxCurrentZoomLevel",
          "PART_ZoomToolsSeparator_0",
       };
-
+      private MainViewModel VM { get; set; }
       public MainWindow()
       {
          #region Theme Init
@@ -69,7 +69,7 @@ namespace DatasheetViewer
          SfSkinManager.SetTheme(this, new Theme("FluentDark"));
          #endregion
          InitializeComponent();
-         var VM = new MainViewModel();
+         VM = new MainViewModel();
          DataContext = VM;
       }
 
@@ -118,6 +118,13 @@ namespace DatasheetViewer
       private void DatasheetsList_SelectionChange(object sender, SelectionChangedEventArgs e)
       {
          DatasheetInfoExpander.IsExpanded = true;
+      }
+
+      private void Edit_Click(object sender, RoutedEventArgs e)
+      {
+         VM.EditDatasheetsCmd.Execute(null);
+         DatasheetEditDialog dialog = new();
+         dialog.ShowDialog();
       }
    }
 }

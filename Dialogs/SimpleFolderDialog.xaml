@@ -4,13 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DatasheetViewer.Dialogs"
-        xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard"
         mc:Ignorable="d"
         
         Title="Simple Folder Dialog" Height="100" Width="300">
-    <!--<Window.InputBindings>
-        <KeyBinding Changed="KeyBinding_Changed" Command="ApplicationCommands.Paste" Key="V" Modifiers="Ctrl"/>
-    </Window.InputBindings>-->
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=SaveCmd}" Key="Return"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -34,3 +33,6 @@
         </Grid>
     </Grid>
 </Window>
+
+<!--VS Suggestion. Not sure how this works but it looks like it creates the DataContext binding.-->
+<!--xmlns:viewmodels="clr-namespace:DatasheetViewer.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:SimpleFolderViewModel}"-->

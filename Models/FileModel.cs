@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DatasheetViewer.Models
 {
-   public class FileModel : Model, ITag
+   public class FileModel : Model, ITag, IDisposable
    {
       #region - Fields & Properties
       private string _fullPath;
@@ -32,6 +32,12 @@ namespace DatasheetViewer.Models
       public void RemoveTagEvent(object sender, Tag tag)
       {
          Tags.Remove(tag);
+      }
+
+      public void Dispose()
+      {
+         Tag.RemoveTagEvent -= RemoveTagEvent;
+         //GC.SuppressFinalize(this);
       }
       #endregion
 

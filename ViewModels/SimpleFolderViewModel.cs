@@ -16,7 +16,7 @@ namespace DatasheetViewer.ViewModels
       public static event EventHandler<string> SelectFolderEvent;
       public event EventHandler CloseDialogEvent;
       private ObservableCollection<string> _previousPaths = new();
-      private string _path;
+      private string _path = @"B:\Electrical\Datasheets";
 
       public Command SaveCmd { get; init; }
       #endregion

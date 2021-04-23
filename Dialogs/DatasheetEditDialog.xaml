@@ -7,24 +7,38 @@
         mc:Ignorable="d"
         Title="DatasheetEditDialog" Height="550" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Border Grid.Column="0">
+        <Border Grid.Row="0">
             <Grid>
-                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Column="0" MinWidth="200" Click="Cancel_Click">Cancel</Button>
+                <StackPanel Orientation="Horizontal" Grid.Column="2">
+                    <Button MinWidth="200" Command="{Binding Path=SaveCmd}">Save</Button>
+                    <Button MinWidth="200" Command="{Binding Path=SaveCmd}" Click="Cancel_Click">Save and Close</Button>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Path=RootDir}"/>
             </Grid>
         </Border>
 
-        <DataGrid Grid.Column="1" ItemsSource="{Binding Path=Datasheets}">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Path=Datasheets}" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Part Name" Binding="{Binding Path=PartName}"/>
-                <DataGridTextColumn Header="Desc" Binding="{Binding Path=Description}"/>
-                <DataGridTextColumn Header="Desc" Binding="{Binding Path=TagNames}"/>
-                <DataGridTextColumn Header="Desc" Binding="{Binding Path=FileName}"/>
-                
+                <DataGridTextColumn Header="Desc" Width="*" MinWidth="200" TextBlock.LineStackingStrategy="BlockLineHeight" TextOptions.TextFormattingMode="Display" Binding="{Binding Path=Description}"/>
+                <DataGridTextColumn Header="Tags" Width="*" MinWidth="200" Binding="{Binding Path=TagNames}"/>
+                <DataGridTextColumn Header="File Name" Binding="{Binding Path=FileName, Mode=OneWay}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

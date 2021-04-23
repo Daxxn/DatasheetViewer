@@ -24,6 +24,7 @@
         <Menu Grid.Column="0" Grid.ColumnSpan="2">
             <MenuItem Header="Open Folder" Click="SelectFolder_Click" Command="{Binding Path=OpenFolderCmd}"/>
             <MenuItem Header="Save" Command="{Binding Path=SaveDatasheetMetafileCmd}"/>
+            <MenuItem Header="Edit" Click="Edit_Click"/>
         </Menu>
 
         <Expander

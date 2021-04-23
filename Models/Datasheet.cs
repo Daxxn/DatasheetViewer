@@ -20,6 +20,13 @@ namespace DatasheetViewer.Models
 
       #region - Constructors
       public Datasheet() { }
+      public Datasheet(DatasheetEditModel ds)
+      {
+         Description = ds.Description;
+         PartName = ds.PartName;
+         FilePath = ds.FileName;
+         CreateTags(ds.TagNames);
+      }
       #endregion
 
       #region - Methods
@@ -47,6 +54,8 @@ namespace DatasheetViewer.Models
 
       private void CreateTags(string tagList)
       {
+         if (tagList is null) return;
+
          string[] split = tagList.Split(_tagDelimiters, StringSplitOptions.RemoveEmptyEntries);
          if (split.Length > 1)
          {

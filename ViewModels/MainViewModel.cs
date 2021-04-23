@@ -17,11 +17,13 @@ namespace DatasheetViewer.ViewModels
    public class MainViewModel : ViewModel
    {
       #region - Fields & Properties
+      public static event EventHandler<DatasheetMetaFile> StartEditEvent;
       public static readonly List<FileDialogCustomPlace> Custom = new()
       {
          new FileDialogCustomPlace(@"B:\Electrical\Datasheets"),
       };
-      public static SimpleFolderViewModel FolderDialogVM { get; private set; } = new SimpleFolderViewModel();
+      public static SimpleFolderViewModel FolderDialogVM { get; private set; } = new();
+      public static DatasheetEditViewModel EditVM { get; private set; } = new();
 
       private Stream _doc;
 
@@ -32,6 +34,7 @@ namespace DatasheetViewer.ViewModels
       private string _searchText;
 
       #region Command Bindings
+      public Command EditDatasheetsCmd { get; init; }
       public Command OpenFolderCmd { get; init; }
       public Command SaveDatasheetMetafileCmd { get; init; }
       public Command SearchCmd { get; init; }
@@ -43,12 +46,24 @@ namespace DatasheetViewer.ViewModels
       {
          SaveDatasheetMetafileCmd = new(o => SaveDatasheetMetafile());
          SearchCmd = new(o => Search());
+         EditDatasheetsCmd = new(o => EditDatasheets());
 
          SimpleFolderViewModel.SelectFolderEvent += SimpleFolderViewModel_SelectFolderEvent;
+         DatasheetEditViewModel.EndEditEvent += DatasheetEditViewModel_EndEditEvent;
       }
       #endregion
 
       #region - Methods
+      private void EditDatasheets()
+      {
+         StartEditEvent?.Invoke(this, DatasheetFile);
+      }
+
+      private void DatasheetEditViewModel_EndEditEvent(object sender, List<Datasheet> e)
+      {
+         DatasheetFile.Datasheets = new(e);
+      }
+
       public void Search()
       {
          SearchResults = new(

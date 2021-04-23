@@ -37,13 +37,41 @@ namespace DatasheetViewer.Models
 
       private string CreateTagString(IEnumerable<Tag> tags)
       {
+         if (tags is null) return null;
+
          StringBuilder sb = new();
          foreach (var tag in tags)
          {
-            sb.Append($"{tag} ");
+            sb.Append($"{tag.Name} ");
          }
          sb.Remove(sb.Length - 1, 1);
          return sb.ToString();
+      }
+
+      private List<Tag> ConvertTags()
+      {
+         List<Tag> output = new();
+         string[] split = TagNames.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+         if(split.Length > 0)
+         {
+            foreach (var tag in split)
+            {
+               output.Add(Tag.CreateTag(tag));
+            }
+         }
+         return output;
+      }
+
+      public static Datasheet ConvertTo(DatasheetEditModel ds)
+      {
+         Datasheet temp = new()
+         {
+            Description = ds.Description,
+            FilePath = ds.FileName,
+            PartName = ds.PartName
+         };
+         temp.Tags = new(ds.ConvertTags());
+         return temp;
       }
       #endregion
 
