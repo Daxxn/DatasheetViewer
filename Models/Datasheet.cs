@@ -71,7 +71,10 @@ namespace DatasheetViewer.Models
       {
          if (String.IsNullOrEmpty(Name)) return false;
 
-         return Name.Contains(searchText) || searchText.Contains(Name) || PartName.Contains(searchText);
+         return
+            Name.ToLower().Contains(searchText.ToLower())
+            || searchText.ToLower().Contains(Name.ToLower())
+            || PartName.ToLower().Contains(searchText.ToLower());
       }
 
       public void RenameFile()

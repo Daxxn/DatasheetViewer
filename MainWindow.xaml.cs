@@ -1,4 +1,5 @@
 ﻿using DatasheetViewer.Dialogs;
+using DatasheetViewer.Models;
 using DatasheetViewer.ViewModels;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Themes.FluentDark.WPF;
@@ -55,6 +56,7 @@ namespace DatasheetViewer
          "PART_ZoomToolsSeparator_0",
       };
       private MainViewModel VM { get; set; }
+      private Settings AppSettings { get; set; } = Settings.AppSettings;
       public MainWindow()
       {
          #region Theme Init
@@ -71,6 +73,18 @@ namespace DatasheetViewer
          InitializeComponent();
          VM = new MainViewModel();
          DataContext = VM;
+         Loaded += VM.WindowLoadedEvent;
+         Loaded += MainWindow_Loaded;
+      }
+
+      private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+      {
+         if (AppSettings is null) return;
+
+         if (AppSettings.OpenOnStartup)
+         {
+            DatasheetListExpander.IsExpanded = true;
+         }
       }
 
       /// <summary>

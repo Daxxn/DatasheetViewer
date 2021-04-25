@@ -1,4 +1,5 @@
-﻿using MVVMLibrary;
+﻿using DatasheetViewer.Models;
+using MVVMLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,7 +17,7 @@ namespace DatasheetViewer.ViewModels
       public static event EventHandler<string> SelectFolderEvent;
       public event EventHandler CloseDialogEvent;
       private ObservableCollection<string> _previousPaths = new();
-      private string _path = @"B:\Electrical\Datasheets";
+      private Settings _appSettings = Settings.AppSettings;
 
       public Command SaveCmd { get; init; }
       #endregion
@@ -31,13 +32,13 @@ namespace DatasheetViewer.ViewModels
       #region - Methods
       public void SaveFolder()
       {
-         if (Directory.Exists(Path))
+         if (Directory.Exists(AppSettings.LastUsedPath))
          {
             SendPath();
          }
          else
          {
-            var result = MessageBox.Show($"Could not find folder.\n{Path}", "Oops", MessageBoxButton.OKCancel);
+            var result = MessageBox.Show($"Could not find folder.\n{AppSettings.LastUsedPath}", "Oops", MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK)
             {
                CloseDialogEvent?.Invoke(this, null);
@@ -47,19 +48,19 @@ namespace DatasheetViewer.ViewModels
 
       private void SendPath()
       {
-         if (Path is not null) PreviousPaths.Add(Path);
-         SelectFolderEvent?.Invoke(this, Path);
+         if (AppSettings.LastUsedPath is not null) PreviousPaths.Add(AppSettings.LastUsedPath);
+         SelectFolderEvent?.Invoke(this, AppSettings.LastUsedPath);
          CloseDialogEvent?.Invoke(this, null);
       }
       #endregion
 
       #region - Full Properties
-      public string Path
+      public Settings AppSettings
       {
-         get { return _path; }
+         get { return _appSettings; }
          set
          {
-            _path = value;
+            _appSettings = value;
             OnPropertyChanged();
          }
       }

@@ -33,19 +33,33 @@ namespace DatasheetViewer.ViewModels
 
       private string _searchText;
 
+      private Tag _selectedTag;
+      private ObservableCollection<Tag> _allTags;
+      private bool _isFilterTagsAscending;
+
+      private Settings _appSettings = Settings.AppSettings;
+
       #region Command Bindings
       public Command EditDatasheetsCmd { get; init; }
       public Command OpenFolderCmd { get; init; }
       public Command SaveDatasheetMetafileCmd { get; init; }
       public Command SearchCmd { get; init; }
+      public Command ClearSearchCmd { get; init; }
+      public Command ClearSelectedTagCmd { get; init; }
+      public Command FilterAscendingCmd { get; init; }
       #endregion
       #endregion
 
       #region - Constructors
       public MainViewModel()
       {
+         AllTags = Tag.AllTags;
          SaveDatasheetMetafileCmd = new(o => SaveDatasheetMetafile());
          SearchCmd = new(o => Search());
+         ClearSearchCmd = new(o => ClearSearch());
+         ClearSelectedTagCmd = new(o => SelectedTag = null);
+         FilterAscendingCmd = new(o => SwitchFilter());
+
          EditDatasheetsCmd = new(o => EditDatasheets());
 
          SimpleFolderViewModel.SelectFolderEvent += SimpleFolderViewModel_SelectFolderEvent;
@@ -66,11 +80,62 @@ namespace DatasheetViewer.ViewModels
 
       public void Search()
       {
+         if (String.IsNullOrEmpty(SearchText)) return;
          SearchResults = new(
             DatasheetFile.Datasheets.Where(
                (d) => d.MatchSearch(SearchText)
             )
          );
+      }
+
+      public void ClearSearch()
+      {
+         SearchResults = null;
+         SearchText = null;
+      }
+
+      public void ClearSelectedTag()
+      {
+         SearchResults = null;
+         SelectedTag = null;
+      }
+
+      public void FilterByTag()
+      {
+         if (SelectedTag is null) return;
+
+         SearchResults = new(
+            DatasheetFile.Datasheets.Where(
+               (d) => d.Tags is not null ? d.Tags.Contains(SelectedTag) : false
+            )
+         );
+      }
+
+      public void SwitchFilter()
+      {
+         IsFilterTagsAscending = !IsFilterTagsAscending;
+         if (IsFilterTagsAscending)
+         {
+            if (SearchResults is not null)
+            {
+               SearchResults.OrderBy((d) => d.PartName);
+            }
+            else
+            {
+               SearchResults = new(DatasheetFile.Datasheets.OrderBy((d) => d.PartName).ToList());
+            }
+         }
+         else
+         {
+            if (SearchResults is not null)
+            {
+               SearchResults.OrderByDescending((d) => d.PartName);
+            }
+            else
+            {
+               SearchResults = new(DatasheetFile.Datasheets.OrderByDescending((d) => d.PartName).ToList());
+            }
+         }
       }
 
       public void OpenDatasheetMetafile()
@@ -79,12 +144,15 @@ namespace DatasheetViewer.ViewModels
          {
             if (File.Exists(DatasheetFile.SavePath))
             {
-               DatasheetFile = JsonReader.OpenJsonFile<DatasheetMetaFile>(DatasheetFile.SavePath);
+               var saveFile = JsonReader.OpenJsonFile<DatasheetSaveModel>(DatasheetFile.SavePath);
+               DatasheetFile = saveFile.MetaFile;
+               Tag.AllTags = new(saveFile.Tags);
             }
             else
             {
                DatasheetFile = DatasheetMetaFile.NewMetafile(DatasheetFile.RootDirectory);
             }
+            AppSettings.LastUsedPath = DatasheetFile.RootDirectory;
          }
          catch (Exception e)
          {
@@ -96,7 +164,11 @@ namespace DatasheetViewer.ViewModels
       {
          try
          {
-            JsonReader.SaveJsonFile(DatasheetFile.SavePath, DatasheetFile, true);
+            JsonReader.SaveJsonFile(
+               DatasheetFile.SavePath,
+               new DatasheetSaveModel { MetaFile = DatasheetFile, Tags = Tag.AllTags.ToList() },
+               true
+            );
          }
          catch (Exception e)
          {
@@ -108,6 +180,16 @@ namespace DatasheetViewer.ViewModels
       {
          DatasheetFile.RootDirectory = e;
          OpenDatasheetMetafile();
+      }
+
+      public void WindowLoadedEvent(object sender, EventArgs e)
+      {
+         DatasheetFile.RootDirectory = Settings.AppSettings.LastUsedPath;
+
+         if (Settings.AppSettings.OpenOnStartup)
+         {
+            OpenDatasheetMetafile();
+         }
       }
       #endregion
 
@@ -149,6 +231,26 @@ namespace DatasheetViewer.ViewModels
          }
       }
 
+      public ObservableCollection<Tag> AllTags
+      {
+         get { return _allTags; }
+         set
+         {
+            _allTags = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public Settings AppSettings
+      {
+         get { return _appSettings; }
+         set
+         {
+            _appSettings = value;
+            OnPropertyChanged();
+         }
+      }
+
       #region Search Props
       public string SearchText
       {
@@ -157,6 +259,7 @@ namespace DatasheetViewer.ViewModels
          {
             _searchText = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(ClearSearchVisible));
          }
       }
 
@@ -168,8 +271,30 @@ namespace DatasheetViewer.ViewModels
             _searchResults = value;
             OnPropertyChanged();
             OnPropertyChanged(
-               new string[]{ nameof(SearchActive), nameof(SearchListVisible), nameof(SearchListNotVisible)}
+               nameof(SearchActive), nameof(SearchListVisible), nameof(SearchListNotVisible)
             );
+         }
+      }
+
+      public Tag SelectedTag
+      {
+         get { return _selectedTag; }
+         set
+         {
+            _selectedTag = value;
+            FilterByTag();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SearchActive), nameof(SearchResults));
+         }
+      }
+
+      public bool IsFilterTagsAscending
+      {
+         get { return _isFilterTagsAscending; }
+         set
+         {
+            _isFilterTagsAscending = value;
+            OnPropertyChanged();
          }
       }
 
@@ -186,6 +311,11 @@ namespace DatasheetViewer.ViewModels
       public Visibility SearchListNotVisible
       {
          get => !SearchActive ? Visibility.Visible : Visibility.Collapsed;
+      }
+
+      public Visibility ClearSearchVisible
+      {
+         get => !String.IsNullOrEmpty(SearchText) ? Visibility.Visible : Visibility.Collapsed;
       }
       #endregion
       #endregion

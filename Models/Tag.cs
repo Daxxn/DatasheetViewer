@@ -31,6 +31,10 @@ namespace DatasheetViewer.Models
       #endregion
 
       #region - Methods
+      public static void OpenTags(IEnumerable<Tag> tags)
+      {
+         AllTags = new(tags);
+      }
       public static Tag CreateTag(string name)
       {
          Tag newTag = new(name);

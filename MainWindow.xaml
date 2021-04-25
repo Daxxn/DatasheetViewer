@@ -25,6 +25,10 @@
             <MenuItem Header="Open Folder" Click="SelectFolder_Click" Command="{Binding Path=OpenFolderCmd}"/>
             <MenuItem Header="Save" Command="{Binding Path=SaveDatasheetMetafileCmd}"/>
             <MenuItem Header="Edit" Click="Edit_Click"/>
+            <MenuItem Header="Settings">
+                <CheckBox Content="Auto-Open" ToolTip="Automatically open on startup." IsChecked="{Binding Path=AppSettings.OpenOnStartup}"/>
+                <TextBlock Text="{Binding Path=AppSettings.LastUsedPath}"/>
+            </MenuItem>
         </Menu>
 
         <Expander
@@ -46,11 +50,85 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <TextBox x:Name="SearchBox" Text="{Binding Path=SearchText}" Grid.Column="0"/>
+                        <TextBox
+                            x:Name="SearchBox"
+                            Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
+                            Grid.Column="0"
+                        >
+                            <TextBox.InputBindings>
+                                <KeyBinding Command="{Binding Path=SearchCmd}" Key="Return"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button
+                            Grid.Column="0"
+                            Visibility="{Binding Path=ClearSearchVisible}"
+                            HorizontalAlignment="Right"
+                            Command="{Binding Path=ClearSearchCmd}"
+                            Background="{x:Null}"
+                            Padding="10,0"
+                            BorderBrush="{x:Null}"
+                        >
+                            X
+                        </Button>
+                        
                         <Button Grid.Column="1" Command="{Binding Path=SearchCmd}">
                             <Image Width="20" Height="20" Source="Icons\SearchIcon.png"/>
                         </Button>
+
+                        <Expander Header="Tags" Grid.Row="1" Grid.ColumnSpan="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <ListView
+                                    ScrollViewer.CanContentScroll="True"
+                                    Grid.Row="0"
+                                    Grid.ColumnSpan="2"
+                                    ItemsSource="{Binding Path=AllTags}"
+                                    SelectedItem="{Binding Path=SelectedTag}"
+                                    MaxHeight="300"
+                                >
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" MaxWidth="200"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border>
+                                                <TextBlock Text="{Binding Path=Name}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+
+                                <Button
+                                    Grid.Column="0"
+                                    Grid.Row="1"
+                                    Command="{Binding Path=FilterAscendingCmd}"
+                                >
+                                    A - Z
+                                </Button>
+                                <Button
+                                    Grid.Column="1"
+                                    Grid.Row="1"
+                                    Command="{Binding Path=ClearSelectedTagCmd}"
+                                >
+                                    Clear
+                                </Button>
+                            </Grid>
+                        </Expander>
                     </Grid>
                 </Border>
 
@@ -105,15 +183,15 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Text="{Binding Path=SelectedDatasheet.PartName}"/>
 
-                        <TextBlock Grid.Row="1">Desc</TextBlock>
-                        <TextBlock Grid.Row="2" Text="{Binding Path=SelectedDatasheet.Description}"/>
+                        <Expander Grid.Row="1" Header="Desc">
+                            <TextBlock Grid.Row="2" Text="{Binding Path=SelectedDatasheet.Description}"/>
+                        </Expander>
 
-                        <Expander Header="Tags" Grid.Row="3" ExpandDirection="Down">
+                        <Expander Header="Tags" Grid.Row="2" ExpandDirection="Down">
                             <ListView ItemsSource="{Binding Path=SelectedDatasheet.Tags}">
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -128,7 +206,7 @@
                             </ListView>
                         </Expander>
 
-                        <Expander Header="File Info" Grid.Row="4" ExpandDirection="Down">
+                        <Expander Header="File Info" Grid.Row="3" ExpandDirection="Down">
                             <StackPanel>
                                 <TextBlock Text="{Binding Path=SelectedDatasheet.Name}"/>
                                 <TextBlock Text="{Binding Path=SelectedDatasheet.FileType}"/>
@@ -139,6 +217,12 @@
             </Grid>
         </Expander>
         
-        <pdf:PdfViewerControl Grid.Row="1" Grid.Column="1" x:Name="PDFView" Loaded="PDFView_Loaded" ItemSource="{Binding Path=Document}"/>
+        <pdf:PdfViewerControl
+            Grid.Row="1"
+            Grid.Column="1"
+            x:Name="PDFView"
+            Loaded="PDFView_Loaded"
+            ItemSource="{Binding Path=Document}"
+        />
     </Grid>
 </Window>

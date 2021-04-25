@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0">Enter a directory:</TextBlock>
-        <TextBox x:Name="PathTextBox" GotKeyboardFocus="PathTextBox_GotKeyboardFocus" Grid.Row="1" Text="{Binding Path=Path}">
+        <TextBox x:Name="PathTextBox" GotKeyboardFocus="PathTextBox_GotKeyboardFocus" Grid.Row="1" Text="{Binding Path=AppSettings.LastUsedPath}">
             <TextBox.ContextMenu>
                 <ContextMenu ItemsSource="{Binding Path=PreviousPaths}"/>
             </TextBox.ContextMenu>
