@@ -20,6 +20,11 @@ namespace DatasheetViewer.Models
 
       #region - Constructors
       public Datasheet() { }
+      public Datasheet(string filePath)
+      {
+         FilePath = filePath;
+         ParseFileName();
+      }
       public Datasheet(DatasheetEditModel ds)
       {
          Description = ds.Description;

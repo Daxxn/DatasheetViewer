@@ -16,6 +16,7 @@ namespace DatasheetViewer.Models
       private string _lastUsedPath;
       private bool _openOnStartup;
       private bool _autoScan;
+      private int _autoScanInterval;
       #endregion
 
       #region - Constructors
@@ -90,6 +91,16 @@ namespace DatasheetViewer.Models
          set
          {
             _autoScan = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public int AutoScanInterval
+      {
+         get { return _autoScanInterval; }
+         set
+         {
+            _autoScanInterval = value;
             OnPropertyChanged();
          }
       }

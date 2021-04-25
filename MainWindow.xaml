@@ -26,9 +26,11 @@
             <MenuItem Header="Save" Command="{Binding Path=SaveDatasheetMetafileCmd}"/>
             <MenuItem Header="Edit" Click="Edit_Click"/>
             <MenuItem Header="Settings">
-                <CheckBox Content="Auto-Open" ToolTip="Automatically open on startup." IsChecked="{Binding Path=AppSettings.OpenOnStartup}"/>
+                <CheckBox Content="Open On Startup" ToolTip="Automatically open on startup." IsChecked="{Binding Path=AppSettings.OpenOnStartup}"/>
+                <CheckBox x:Name="AutoScanCheckbox" Content="Auto-Update" ToolTip="Automatically scan for new datasheets." IsChecked="{Binding Path=AppSettings.AutoScan}"/>
                 <TextBlock Text="{Binding Path=AppSettings.LastUsedPath}"/>
             </MenuItem>
+            <MenuItem Header="Test" Command="{Binding Path=TestCmd}"/>
         </Menu>
 
         <Expander

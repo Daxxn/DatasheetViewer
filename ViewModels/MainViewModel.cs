@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -39,6 +40,8 @@ namespace DatasheetViewer.ViewModels
 
       private Settings _appSettings = Settings.AppSettings;
 
+      private Timer ScanTimer;
+
       #region Command Bindings
       public Command EditDatasheetsCmd { get; init; }
       public Command OpenFolderCmd { get; init; }
@@ -47,12 +50,24 @@ namespace DatasheetViewer.ViewModels
       public Command ClearSearchCmd { get; init; }
       public Command ClearSelectedTagCmd { get; init; }
       public Command FilterAscendingCmd { get; init; }
+
+      public Command TestCmd { get; init; }
       #endregion
       #endregion
 
       #region - Constructors
       public MainViewModel()
       {
+         if (AppSettings.AutoScan)
+         {
+            ScanTimer = new()
+            {
+               Interval = AppSettings.AutoScanInterval > 0 ? AppSettings.AutoScanInterval * 1000 : 10 * 1000,
+               AutoReset = true,
+               Enabled = AppSettings.AutoScan
+            };
+            ScanTimer.Elapsed += ScanTimerCallback;
+         }
          AllTags = Tag.AllTags;
          SaveDatasheetMetafileCmd = new(o => SaveDatasheetMetafile());
          SearchCmd = new(o => Search());
@@ -62,12 +77,18 @@ namespace DatasheetViewer.ViewModels
 
          EditDatasheetsCmd = new(o => EditDatasheets());
 
+         TestCmd = new(o => Test());
+
          SimpleFolderViewModel.SelectFolderEvent += SimpleFolderViewModel_SelectFolderEvent;
          DatasheetEditViewModel.EndEditEvent += DatasheetEditViewModel_EndEditEvent;
       }
       #endregion
 
       #region - Methods
+      public void Test()
+      {
+         DatasheetFile.ScanDatasheetDir();
+      }
       private void EditDatasheets()
       {
          StartEditEvent?.Invoke(this, DatasheetFile);
@@ -189,6 +210,30 @@ namespace DatasheetViewer.ViewModels
          if (Settings.AppSettings.OpenOnStartup)
          {
             OpenDatasheetMetafile();
+         }
+      }
+
+      public void AutoScanChanged(object sender, EventArgs e)
+      {
+         if (AppSettings.AutoScan)
+         {
+            ScanTimer.Start();
+         }
+         else
+         {
+            ScanTimer.Stop();
+         }
+      }
+
+      public void ScanTimerCallback(object sender, ElapsedEventArgs e)
+      {
+         try
+         {
+            DatasheetFile.ScanDatasheetDir();
+         }
+         catch (Exception ex)
+         {
+            MessageBox.Show(ex.Message, "Error");
          }
       }
       #endregion

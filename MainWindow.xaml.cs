@@ -75,6 +75,9 @@ namespace DatasheetViewer
          DataContext = VM;
          Loaded += VM.WindowLoadedEvent;
          Loaded += MainWindow_Loaded;
+
+         AutoScanCheckbox.Checked += VM.AutoScanChanged;
+         AutoScanCheckbox.Unchecked += VM.AutoScanChanged;
       }
 
       private void MainWindow_Loaded(object sender, RoutedEventArgs e)

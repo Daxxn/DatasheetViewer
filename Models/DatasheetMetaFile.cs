@@ -40,6 +40,38 @@ namespace DatasheetViewer.Models
 
          return newFile;
       }
+
+      public void ScanDatasheetDir()
+      {
+         try
+         {
+            if (!Directory.Exists(RootDirectory)) return;
+            Console.WriteLine("Checking Dir");
+            string[] datasheetFiles = Directory.GetFiles(RootDirectory, "*.pdf");
+            if (datasheetFiles.Length > Datasheets.Count)
+            {
+               ObservableCollection<Datasheet> newDatasheets = new(Datasheets);
+               var tempDatasheets = datasheetFiles.Where((ds) => !Datasheets.Any((d) => d.FilePath == ds));
+               foreach (var dsFile in tempDatasheets)
+               {
+                  newDatasheets.Add(new(dsFile));
+               }
+               Datasheets = newDatasheets;
+            }
+            else if (datasheetFiles.Length < Datasheets.Count)
+            {
+               var removedDatasheets = Datasheets.Where((ds) => datasheetFiles.Contains(ds.FilePath));
+               if (removedDatasheets.Count() < Datasheets.Count)
+               {
+                  Datasheets = new(removedDatasheets);
+               }
+            }
+         }
+         catch (Exception)
+         {
+            throw;
+         }
+      }
       #endregion
 
       #region - Full Properties
