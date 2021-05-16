@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="DatasheetEditDialog" Height="550" Width="800">
     <Window.InputBindings>
-        <KeyBinding Command="{Binding Path=SaveCmd}" Changed="SaveAndClose_Changed" Key="Return"/>
-        <KeyBinding Command="{Binding Path=SaveCmd}" Key="Return" Modifiers="Shift"/>
+        <KeyBinding Command="{Binding Path=SaveCmd}" Key="Return"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -33,17 +32,9 @@
                     <Button
                         MinWidth="100"
                         Command="{Binding Path=SaveCmd}"
-                        ToolTip="(Shift + Enter)"
+                        ToolTip="(Enter) Save and close."
                     >
                         Save
-                    </Button>
-                    <Button
-                        MinWidth="100"
-                        Command="{Binding Path=SaveCmd}"
-                        Click="Cancel_Click"
-                        ToolTip="(Enter)"
-                    >
-                        Save and Close
                     </Button>
                 </StackPanel>
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Path=RootDir}"/>

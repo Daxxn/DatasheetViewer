@@ -1,6 +1,7 @@
 ﻿using DatasheetViewer.Dialogs;
 using DatasheetViewer.Models;
 using DatasheetViewer.ViewModels;
+using Syncfusion.Pdf.Interactive;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Themes.FluentDark.WPF;
 using Syncfusion.Themes.MaterialDark.WPF;
@@ -142,6 +143,11 @@ namespace DatasheetViewer
          VM.EditDatasheetsCmd.Execute(null);
          DatasheetEditDialog dialog = new();
          dialog.ShowDialog();
+      }
+
+      private void PDFView_PageSelected(object sender, PageSelectedEventArgs e)
+      {
+
       }
    }
 }

@@ -24,6 +24,7 @@
         <Menu Grid.Column="0" Grid.ColumnSpan="2">
             <MenuItem Header="Open Folder" Click="SelectFolder_Click" Command="{Binding Path=OpenFolderCmd}"/>
             <MenuItem Header="Save" Command="{Binding Path=SaveDatasheetMetafileCmd}"/>
+            <MenuItem Header="Update" Command="{Binding Path=UpdateDatasheetsCmd}"/>
             <MenuItem Header="Edit" Click="Edit_Click"/>
             <MenuItem Header="Settings">
                 <CheckBox Content="Open On Startup" ToolTip="Automatically open on startup." IsChecked="{Binding Path=AppSettings.OpenOnStartup}"/>
@@ -134,44 +135,50 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="1">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="1">
+                    <Border>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0">Datasheets</TextBlock>
-                        <ListView
+                            <TextBlock Grid.Row="0">Datasheets</TextBlock>
+                            <ListView
                             Grid.Row="1"
                             x:Name="DatasheetsList"
+                            ScrollViewer.CanContentScroll="True"
+                            ScrollViewer.IsDeferredScrollingEnabled="True"
                             Visibility="{Binding Path=SearchListNotVisible, UpdateSourceTrigger=PropertyChanged}"
                             ItemsSource="{Binding Path=DatasheetFile.Datasheets}"
                             SelectedItem="{Binding Path=SelectedDatasheet}"
                             SelectionChanged="DatasheetsList_SelectionChange"
                         >
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Name}"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <ListView
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Name}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <ListView
                             Grid.Row="1"
                             Visibility="{Binding Path=SearchListVisible, UpdateSourceTrigger=PropertyChanged}"
                             x:Name="DatasheetsSearchList"
+                            ScrollViewer.CanContentScroll="True"
+                            ScrollViewer.IsDeferredScrollingEnabled="True"
                             ItemsSource="{Binding Path=SearchResults}"
                             SelectedItem="{Binding Path=SelectedDatasheet}"
                             SelectionChanged="DatasheetsList_SelectionChange"
                         >
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Name}"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                </Border>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Name}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+                    </Border>
+                </ScrollViewer>
 
                 <Expander
                     x:Name="DatasheetInfoExpander"
@@ -224,6 +231,7 @@
             Grid.Column="1"
             x:Name="PDFView"
             Loaded="PDFView_Loaded"
+            IsBookmarkEnabled="False"
             ItemSource="{Binding Path=Document}"
         />
     </Grid>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DatasheetViewer.Models
 {
-   public class FileModel : Model, ITag, IDisposable
+   public class FileModel : Model, ITag, IDisposable, IEquatable<string>
    {
       #region - Fields & Properties
       private string _fullPath;
@@ -38,6 +38,16 @@ namespace DatasheetViewer.Models
       {
          Tag.RemoveTagEvent -= RemoveTagEvent;
          //GC.SuppressFinalize(this);
+      }
+
+      /// <summary>
+      /// Checks if the file path matches.
+      /// </summary>
+      /// <param name="other">File path to check.</param>
+      /// <returns><see cref="bool"/> if the file path matches.</returns>
+      public bool Equals(string other)
+      {
+         return FilePath == other;
       }
       #endregion
 

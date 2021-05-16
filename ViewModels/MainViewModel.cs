@@ -46,6 +46,7 @@ namespace DatasheetViewer.ViewModels
       public Command EditDatasheetsCmd { get; init; }
       public Command OpenFolderCmd { get; init; }
       public Command SaveDatasheetMetafileCmd { get; init; }
+      public Command UpdateDatasheetsCmd { get; init; }
       public Command SearchCmd { get; init; }
       public Command ClearSearchCmd { get; init; }
       public Command ClearSelectedTagCmd { get; init; }
@@ -70,6 +71,7 @@ namespace DatasheetViewer.ViewModels
          }
          AllTags = Tag.AllTags;
          SaveDatasheetMetafileCmd = new(o => SaveDatasheetMetafile());
+         UpdateDatasheetsCmd = new(o => UpdateDatasheets());
          SearchCmd = new(o => Search());
          ClearSearchCmd = new(o => ClearSearch());
          ClearSelectedTagCmd = new(o => SelectedTag = null);
@@ -89,6 +91,7 @@ namespace DatasheetViewer.ViewModels
       {
          DatasheetFile.ScanDatasheetDir();
       }
+
       private void EditDatasheets()
       {
          StartEditEvent?.Invoke(this, DatasheetFile);
@@ -190,6 +193,21 @@ namespace DatasheetViewer.ViewModels
                new DatasheetSaveModel { MetaFile = DatasheetFile, Tags = Tag.AllTags.ToList() },
                true
             );
+         }
+         catch (Exception e)
+         {
+            MessageBox.Show(e.Message, "Error");
+         }
+      }
+
+      public void UpdateDatasheets()
+      {
+         try
+         {
+            if (DatasheetFile.UpdateDatasheets())
+            {
+               SaveDatasheetMetafile();
+            }
          }
          catch (Exception e)
          {

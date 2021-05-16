@@ -26,15 +26,16 @@ namespace DatasheetViewer.Dialogs
          SfSkinManager.SetTheme(this, new Theme("FluentDark"));
 
          DataContext = MainViewModel.EditVM;
+         DatasheetEditViewModel.EndEditEvent += DatasheetEditViewModel_EndEditEvent;
          InitializeComponent();
       }
 
-      private void Cancel_Click(object sender, RoutedEventArgs e)
+      private void DatasheetEditViewModel_EndEditEvent(object sender, List<Models.Datasheet> e)
       {
          Close();
       }
 
-      private void SaveAndClose_Changed(object sender, EventArgs e)
+      private void Cancel_Click(object sender, RoutedEventArgs e)
       {
          Close();
       }

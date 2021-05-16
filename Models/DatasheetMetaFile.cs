@@ -72,6 +72,30 @@ namespace DatasheetViewer.Models
             throw;
          }
       }
+
+      public bool UpdateDatasheets()
+      {
+         bool isChanged = false;
+         string[] files = Directory.GetFiles(RootDirectory, "*.pdf", SearchOption.TopDirectoryOnly);
+         foreach (var file in files)
+         {
+            bool isFound = false;
+            foreach (var ds in Datasheets)
+            {
+               if (ds.Equals(file))
+               {
+                  isFound = true;
+                  isChanged = true;
+                  break;
+               }
+            }
+            if (!isFound)
+            {
+               Datasheets.Add(new(file));
+            }
+         }
+         return isChanged;
+      }
       #endregion
 
       #region - Full Properties
