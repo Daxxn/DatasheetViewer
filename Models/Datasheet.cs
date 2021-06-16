@@ -61,14 +61,18 @@ namespace DatasheetViewer.Models
       {
          if (tagList is null) return;
 
+         Tags = new();
          string[] split = tagList.Split(_tagDelimiters, StringSplitOptions.RemoveEmptyEntries);
          if (split.Length > 1)
          {
-            Tags = new();
             foreach (var t in split)
             {
                Tags.Add(Tag.CreateTag(t));
             }
+         }
+         else
+         {
+            Tags.Add(Tag.CreateTag(tagList));
          }
       }
 

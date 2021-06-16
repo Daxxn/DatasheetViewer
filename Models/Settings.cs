@@ -13,10 +13,12 @@ namespace DatasheetViewer.Models
    {
       #region - Fields & Properties
       private static Settings _appSettings;
-      private string _lastUsedPath;
-      private bool _openOnStartup;
-      private bool _autoScan;
-      private int _autoScanInterval;
+      private string _lastUsedPath = @"B:\\Electrical\\Datasheets";
+      private bool _openOnStartup = true;
+      private bool _autoScan = false;
+      private int _autoScanInterval = 60;
+      private int _messageInterval = 10;
+      private bool _hideMessage = true;
       #endregion
 
       #region - Constructors
@@ -101,6 +103,26 @@ namespace DatasheetViewer.Models
          set
          {
             _autoScanInterval = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public int MessageInterval
+      {
+         get { return _messageInterval; }
+         set
+         {
+            _messageInterval = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public bool HideMessage
+      {
+         get { return _hideMessage; }
+         set
+         {
+            _hideMessage = value;
             OnPropertyChanged();
          }
       }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace DatasheetViewer.ViewModels
       private Datasheet _selectedDatasheet;
 
       private string _searchText;
+      private bool _searchTagsEnable = true;
 
       private Tag _selectedTag;
       private ObservableCollection<Tag> _allTags;
@@ -41,6 +43,10 @@ namespace DatasheetViewer.ViewModels
       private Settings _appSettings = Settings.AppSettings;
 
       private Timer ScanTimer;
+      private Timer MessageTimer;
+
+      private Message _message;
+      private Visibility _MessageVisible = Visibility.Collapsed;
 
       #region Command Bindings
       public Command EditDatasheetsCmd { get; init; }
@@ -48,8 +54,7 @@ namespace DatasheetViewer.ViewModels
       public Command SaveDatasheetMetafileCmd { get; init; }
       public Command UpdateDatasheetsCmd { get; init; }
       public Command SearchCmd { get; init; }
-      public Command ClearSearchCmd { get; init; }
-      public Command ClearSelectedTagCmd { get; init; }
+      public Command ClearSelectedCmd { get; init; }
       public Command FilterAscendingCmd { get; init; }
 
       public Command TestCmd { get; init; }
@@ -69,12 +74,17 @@ namespace DatasheetViewer.ViewModels
             };
             ScanTimer.Elapsed += ScanTimerCallback;
          }
+         MessageTimer = new()
+         {
+            Interval = AppSettings.MessageInterval > 0 ? AppSettings.MessageInterval * 1000 : 10 * 1000,
+            AutoReset = false,
+         };
+         MessageTimer.Elapsed += MessageTimer_Elapsed;
          AllTags = Tag.AllTags;
          SaveDatasheetMetafileCmd = new(o => SaveDatasheetMetafile());
          UpdateDatasheetsCmd = new(o => UpdateDatasheets());
          SearchCmd = new(o => Search());
-         ClearSearchCmd = new(o => ClearSearch());
-         ClearSelectedTagCmd = new(o => SelectedTag = null);
+         ClearSelectedCmd = new(o => ClearSelected());
          FilterAscendingCmd = new(o => SwitchFilter());
 
          EditDatasheetsCmd = new(o => EditDatasheets());
@@ -89,7 +99,7 @@ namespace DatasheetViewer.ViewModels
       #region - Methods
       public void Test()
       {
-         DatasheetFile.ScanDatasheetDir();
+         InitMessage("Test Message", MessageType.Error);
       }
 
       private void EditDatasheets()
@@ -105,23 +115,36 @@ namespace DatasheetViewer.ViewModels
       public void Search()
       {
          if (String.IsNullOrEmpty(SearchText)) return;
-         SearchResults = new(
-            DatasheetFile.Datasheets.Where(
-               (d) => d.MatchSearch(SearchText)
-            )
-         );
+         if (SearchTagsEnable)
+         {
+            SearchResults = new(
+               DatasheetFile.Datasheets.Where(
+                  d =>
+                     (
+                        d.Tags is not null
+                        ? d.Tags.Any( t => t.Name == SearchText)
+                        : false
+                     ) 
+                     ||
+                     d.MatchSearch(SearchText)
+               ));
+         }
+         else
+         {
+            SearchResults = new(
+                  DatasheetFile.Datasheets.Where(
+                     (d) => d.MatchSearch(SearchText)
+                  )
+               );
+         }
+         InitMessage("Search Done...");
       }
 
-      public void ClearSearch()
+      public void ClearSelected()
       {
          SearchResults = null;
          SearchText = null;
-      }
-
-      public void ClearSelectedTag()
-      {
-         SearchResults = null;
-         SelectedTag = null;
+         InitMessage("Search Results Cleared...");
       }
 
       public void FilterByTag()
@@ -177,10 +200,11 @@ namespace DatasheetViewer.ViewModels
                DatasheetFile = DatasheetMetaFile.NewMetafile(DatasheetFile.RootDirectory);
             }
             AppSettings.LastUsedPath = DatasheetFile.RootDirectory;
+            InitMessage("Open Completed", MessageType.Finished);
          }
          catch (Exception e)
          {
-            MessageBox.Show(e.Message, "Error");
+            InitMessage(e.Message, MessageType.Error);
          }
       }
 
@@ -193,10 +217,11 @@ namespace DatasheetViewer.ViewModels
                new DatasheetSaveModel { MetaFile = DatasheetFile, Tags = Tag.AllTags.ToList() },
                true
             );
+            InitMessage("Save Completed", MessageType.Finished);
          }
          catch (Exception e)
          {
-            MessageBox.Show(e.Message, "Error");
+            InitMessage(e.Message, MessageType.Error);
          }
       }
 
@@ -211,7 +236,18 @@ namespace DatasheetViewer.ViewModels
          }
          catch (Exception e)
          {
-            MessageBox.Show(e.Message, "Error");
+            InitMessage(e.Message, MessageType.Error);
+         }
+      }
+
+      public void SelectedTagChanged(object sender, EventArgs e)
+      {
+         if (DatasheetFile is not null)
+         {
+            if (SelectedTag is not null)
+            {
+               SearchResults = new(DatasheetFile.Datasheets.Where((d) => d.Tags != null ? d.Tags.Any(t => SelectedTag.ID == t.ID) : false));
+            }
          }
       }
 
@@ -231,6 +267,9 @@ namespace DatasheetViewer.ViewModels
          }
       }
 
+      #region Auto Update Methods
+      // Not working...
+      // And it might not be necessary.
       public void AutoScanChanged(object sender, EventArgs e)
       {
          if (AppSettings.AutoScan)
@@ -254,6 +293,24 @@ namespace DatasheetViewer.ViewModels
             MessageBox.Show(ex.Message, "Error");
          }
       }
+      #endregion
+
+      #region Message Methods
+      private void MessageTimer_Elapsed(object sender, ElapsedEventArgs e)
+      {
+         MessageVisible = Visibility.Collapsed;
+      }
+
+      private void InitMessage(string message, MessageType type = MessageType.Info)
+      {
+         Message = new(message, type);
+         MessageVisible = Visibility.Visible;
+         if (AppSettings.HideMessage)
+         {
+            MessageTimer.Start();
+         }
+      }
+      #endregion
       #endregion
 
       #region - Full Properties
@@ -314,6 +371,28 @@ namespace DatasheetViewer.ViewModels
          }
       }
 
+      #region Message Props
+      public Message Message
+      {
+         get { return _message; }
+         set
+         {
+            _message = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public Visibility MessageVisible
+      {
+         get { return _MessageVisible; }
+         set
+         {
+            _MessageVisible = value;
+            OnPropertyChanged();
+         }
+      }
+      #endregion
+
       #region Search Props
       public string SearchText
       {
@@ -321,6 +400,17 @@ namespace DatasheetViewer.ViewModels
          set
          {
             _searchText = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ClearSearchVisible));
+         }
+      }
+
+      public bool SearchTagsEnable
+      {
+         get { return _searchTagsEnable; }
+         set
+         {
+            _searchTagsEnable = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(ClearSearchVisible));
          }

@@ -7,21 +7,36 @@
         xmlns:pdf="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
         mc:Ignorable="d"
         WindowState="Maximized"
+        xmlns:utils="clr-namespace:DatasheetViewer.Utils"
         Title="Datasheets" Height="450" Width="800">
+    <Window.Resources>
+        <utils:MessageColorConverter x:Key="MessageColorConverter"/>
+        <Style TargetType="TextBlock" x:Key="valueTitle">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="#ccc"/>
+            <Setter Property="Padding" Value="2"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="DatasheetValue">
+            <Setter Property="Background" Value="#11ffffff"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+    </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Command="{Binding Path=SaveDatasheetMetafileCmd}" Key="S" Modifiers="Ctrl"/>
     </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Column="0" Grid.ColumnSpan="2">
+        <Menu Grid.Column="0" Grid.ColumnSpan="3">
             <MenuItem Header="Open Folder" Click="SelectFolder_Click" Command="{Binding Path=OpenFolderCmd}"/>
             <MenuItem Header="Save" Command="{Binding Path=SaveDatasheetMetafileCmd}"/>
             <MenuItem Header="Update" Command="{Binding Path=UpdateDatasheetsCmd}"/>
@@ -30,6 +45,8 @@
                 <CheckBox Content="Open On Startup" ToolTip="Automatically open on startup." IsChecked="{Binding Path=AppSettings.OpenOnStartup}"/>
                 <CheckBox x:Name="AutoScanCheckbox" Content="Auto-Update" ToolTip="Automatically scan for new datasheets." IsChecked="{Binding Path=AppSettings.AutoScan}"/>
                 <TextBlock Text="{Binding Path=AppSettings.LastUsedPath}"/>
+                <CheckBox Content="Hide Message" ToolTip="Hide Message after the message time interval hase elapsed." IsChecked="{Binding Path=AppSettings.HideMessage}"/>
+                <TextBox Text="{Binding Path=AppSettings.MessageInterval, UpdateSourceTrigger=PropertyChanged}"/>
             </MenuItem>
             <MenuItem Header="Test" Command="{Binding Path=TestCmd}"/>
         </Menu>
@@ -71,7 +88,7 @@
                             Grid.Column="0"
                             Visibility="{Binding Path=ClearSearchVisible}"
                             HorizontalAlignment="Right"
-                            Command="{Binding Path=ClearSearchCmd}"
+                            Command="{Binding Path=ClearSelectedCmd}"
                             Background="{x:Null}"
                             Padding="10,0"
                             BorderBrush="{x:Null}"
@@ -83,7 +100,7 @@
                             <Image Width="20" Height="20" Source="Icons\SearchIcon.png"/>
                         </Button>
 
-                        <Expander Header="Tags" Grid.Row="1" Grid.ColumnSpan="2">
+                        <Border Grid.Row="1" Grid.ColumnSpan="2" Padding="2" BorderThickness="1,2" BorderBrush="Gray" CornerRadius="4" Margin="0,2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -93,45 +110,21 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-
-                                <ListView
-                                    ScrollViewer.CanContentScroll="True"
-                                    Grid.Row="0"
-                                    Grid.ColumnSpan="2"
-                                    ItemsSource="{Binding Path=AllTags}"
-                                    SelectedItem="{Binding Path=SelectedTag}"
-                                    MaxHeight="300"
-                                >
-                                    <ListView.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal" MaxWidth="200"/>
-                                        </ItemsPanelTemplate>
-                                    </ListView.ItemsPanel>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border>
-                                                <TextBlock Text="{Binding Path=Name}"/>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-
                                 <Button
                                     Grid.Column="0"
-                                    Grid.Row="1"
                                     Command="{Binding Path=FilterAscendingCmd}"
                                 >
                                     A - Z
                                 </Button>
                                 <Button
                                     Grid.Column="1"
-                                    Grid.Row="1"
-                                    Command="{Binding Path=ClearSelectedTagCmd}"
+                                    Command="{Binding Path=ClearSelectedCmd}"
                                 >
                                     Clear
                                 </Button>
+                                <CheckBox Grid.Row="1" Grid.ColumnSpan="2" IsChecked="{Binding Path=SearchTagsEnable}">Search Tags</CheckBox>
                             </Grid>
-                        </Expander>
+                        </Border>
                     </Grid>
                 </Border>
 
@@ -140,20 +133,17 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="0">Datasheets</TextBlock>
                             <ListView
-                            Grid.Row="1"
-                            x:Name="DatasheetsList"
-                            ScrollViewer.CanContentScroll="True"
-                            ScrollViewer.IsDeferredScrollingEnabled="True"
-                            Visibility="{Binding Path=SearchListNotVisible, UpdateSourceTrigger=PropertyChanged}"
-                            ItemsSource="{Binding Path=DatasheetFile.Datasheets}"
-                            SelectedItem="{Binding Path=SelectedDatasheet}"
-                            SelectionChanged="DatasheetsList_SelectionChange"
-                        >
+                                Grid.Row="0"
+                                x:Name="DatasheetsList"
+                                ScrollViewer.CanContentScroll="True"
+                                ScrollViewer.IsDeferredScrollingEnabled="True"
+                                Visibility="{Binding Path=SearchListNotVisible, UpdateSourceTrigger=PropertyChanged}"
+                                ItemsSource="{Binding Path=DatasheetFile.Datasheets}"
+                                SelectedItem="{Binding Path=SelectedDatasheet}"
+                                SelectionChanged="DatasheetsList_SelectionChange"
+                            >
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Path=Name}"/>
@@ -161,15 +151,15 @@
                                 </ListView.ItemTemplate>
                             </ListView>
                             <ListView
-                            Grid.Row="1"
-                            Visibility="{Binding Path=SearchListVisible, UpdateSourceTrigger=PropertyChanged}"
-                            x:Name="DatasheetsSearchList"
-                            ScrollViewer.CanContentScroll="True"
-                            ScrollViewer.IsDeferredScrollingEnabled="True"
-                            ItemsSource="{Binding Path=SearchResults}"
-                            SelectedItem="{Binding Path=SelectedDatasheet}"
-                            SelectionChanged="DatasheetsList_SelectionChange"
-                        >
+                                Grid.Row="0"
+                                Visibility="{Binding Path=SearchListVisible, UpdateSourceTrigger=PropertyChanged}"
+                                x:Name="DatasheetsSearchList"
+                                ScrollViewer.CanContentScroll="True"
+                                ScrollViewer.IsDeferredScrollingEnabled="True"
+                                ItemsSource="{Binding Path=SearchResults}"
+                                SelectedItem="{Binding Path=SelectedDatasheet}"
+                                SelectionChanged="DatasheetsList_SelectionChange"
+                            >
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Path=Name}"/>
@@ -184,7 +174,7 @@
                     x:Name="DatasheetInfoExpander"
                     Header="Datasheet"
                     Grid.Row="2"
-                    ExpandDirection="Up"
+                    ExpandDirection="Down"
                 >
                     <Grid>
                         <Grid.RowDefinitions>
@@ -192,47 +182,75 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="{Binding Path=SelectedDatasheet.PartName}"/>
+                        <TextBlock Grid.Row="0" Style="{StaticResource valueTitle}">Part</TextBlock>
+                        <TextBlock Grid.Row="1" Text="{Binding Path=SelectedDatasheet.PartName}" Style="{StaticResource DatasheetValue}"/>
 
-                        <Expander Grid.Row="1" Header="Desc">
-                            <TextBlock Grid.Row="2" Text="{Binding Path=SelectedDatasheet.Description}"/>
-                        </Expander>
+                        <TextBlock Grid.Row="2" Style="{StaticResource valueTitle}">Desc</TextBlock>
+                        <TextBlock Grid.Row="3" Text="{Binding Path=SelectedDatasheet.Description}" Style="{StaticResource DatasheetValue}"/>
 
-                        <Expander Header="Tags" Grid.Row="2" ExpandDirection="Down">
-                            <ListView ItemsSource="{Binding Path=SelectedDatasheet.Tags}">
-                                <ListView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ListView.ItemsPanel>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Path=Name}"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Expander>
-
-                        <Expander Header="File Info" Grid.Row="3" ExpandDirection="Down">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Path=SelectedDatasheet.Name}"/>
-                                <TextBlock Text="{Binding Path=SelectedDatasheet.FileType}"/>
-                            </StackPanel>
-                        </Expander>
+                        <TextBlock Grid.Row="4" Style="{StaticResource valueTitle}">Tags</TextBlock>
+                        <ListView
+                            Grid.Row="5"
+                            x:Name="DatasheetTagsView"
+                            Background="#11ffffff"
+                            ItemsSource="{Binding Path=SelectedDatasheet.Tags}"
+                            SelectedItem="{Binding Path=SelectedTag}"
+                        >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Name}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Grid>
                 </Expander>
             </Grid>
         </Expander>
-        
+
+        <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
         <pdf:PdfViewerControl
             Grid.Row="1"
-            Grid.Column="1"
+            Grid.Column="2"
             x:Name="PDFView"
             Loaded="PDFView_Loaded"
             IsBookmarkEnabled="False"
             ItemSource="{Binding Path=Document}"
         />
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Ellipse
+                Grid.Column="0"
+                Height="14"
+                Width="14"
+                Visibility="{Binding Path=MessageVisible, UpdateSourceTrigger=PropertyChanged}"
+                Fill="{Binding Path=Message.Type, Converter={StaticResource MessageColorConverter}}"
+                StrokeThickness="1"
+                Stroke="Gray"
+                Margin="10,2"
+            />
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                Margin="0,2"
+                Text="{Binding Path=Message.Text}"
+                Visibility="{Binding Path=MessageVisible, UpdateSourceTrigger=PropertyChanged}"
+            />
+        </Grid>
     </Grid>
 </Window>

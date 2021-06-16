@@ -76,6 +76,7 @@ namespace DatasheetViewer
          DataContext = VM;
          Loaded += VM.WindowLoadedEvent;
          Loaded += MainWindow_Loaded;
+         DatasheetTagsView.SelectionChanged += VM.SelectedTagChanged;
 
          AutoScanCheckbox.Checked += VM.AutoScanChanged;
          AutoScanCheckbox.Unchecked += VM.AutoScanChanged;

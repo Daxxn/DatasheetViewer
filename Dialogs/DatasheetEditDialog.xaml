@@ -32,7 +32,7 @@
                     <Button
                         MinWidth="100"
                         Command="{Binding Path=SaveCmd}"
-                        ToolTip="(Enter) Save and close."
+                        ToolTip="Save and close. (Enter)"
                     >
                         Save
                     </Button>
@@ -41,12 +41,40 @@
             </Grid>
         </Border>
 
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Path=Datasheets}" AutoGenerateColumns="False">
+        <DataGrid
+            Grid.Row="2"
+            ItemsSource="{Binding Path=Datasheets}"
+            AutoGenerateColumns="False"
+            SelectedItem="{Binding Path=SelectedDatasheet, UpdateSourceTrigger=PropertyChanged}"
+        >
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding Path=DeleteCmd}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Part Name" Binding="{Binding Path=PartName}"/>
-                <DataGridTextColumn Header="Desc" Width="*" MinWidth="200" TextBlock.LineStackingStrategy="BlockLineHeight" TextOptions.TextFormattingMode="Display" Binding="{Binding Path=Description}"/>
-                <DataGridTextColumn Header="Tags" Width="*" MinWidth="200" Binding="{Binding Path=TagNames}"/>
-                <DataGridTextColumn Header="File Name" Binding="{Binding Path=FileName, Mode=OneWay}"/>
+                <DataGridTextColumn
+                    Header="Part Name"
+                    Binding="{Binding Path=PartName, UpdateSourceTrigger=PropertyChanged}"
+                />
+                <DataGridTextColumn
+                    Header="Desc"
+                    Width="*"
+                    MinWidth="200"
+                    TextBlock.LineStackingStrategy="BlockLineHeight"
+                    TextOptions.TextFormattingMode="Display"
+                    Binding="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"
+                />
+                <DataGridTextColumn
+                    Header="Tags"
+                    Width="*"
+                    MinWidth="200"
+                    Binding="{Binding Path=TagNames, UpdateSourceTrigger=PropertyChanged}"
+                />
+                <DataGridTextColumn
+                    Header="File Name"
+                    Binding="{Binding Path=FileName, Mode=OneWay}"
+                />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
