@@ -33,6 +33,9 @@ namespace DatasheetViewer.ViewModels
       private ObservableCollection<Datasheet> _searchResults;
       private Datasheet _selectedDatasheet;
 
+      private static readonly string defaultTitle = "Datasheets";
+      private string _title = defaultTitle;
+
       private string _searchText;
       private bool _searchTagsEnable = true;
 
@@ -47,6 +50,8 @@ namespace DatasheetViewer.ViewModels
 
       private Message _message;
       private Visibility _MessageVisible = Visibility.Collapsed;
+
+      private bool _IsEditorNOTOpen = true;
 
       #region Command Bindings
       public Command EditDatasheetsCmd { get; init; }
@@ -110,6 +115,11 @@ namespace DatasheetViewer.ViewModels
       private void DatasheetEditViewModel_EndEditEvent(object sender, List<Datasheet> e)
       {
          DatasheetFile.Datasheets = new(e);
+      }
+
+      public void EditCompleted(object sender, EventArgs e)
+      {
+         InitMessage("Edit Completed", MessageType.Finished);
       }
 
       public void Search()
@@ -314,6 +324,16 @@ namespace DatasheetViewer.ViewModels
       #endregion
 
       #region - Full Properties
+      public string Title
+      {
+         get { return _title; }
+         set
+         {
+            _title = value;
+            OnPropertyChanged();
+         }
+      }
+
       public Stream Document
       {
          get { return _doc; }
@@ -344,8 +364,21 @@ namespace DatasheetViewer.ViewModels
             {
                if (File.Exists(value.FilePath))
                {
-                  Document = new FileStream(value.FilePath, FileMode.Open);
+                  try
+                  {
+                     Document = new FileStream(value.FilePath, FileMode.Open);
+                  }
+                  catch (IOException)
+                  {
+                     InitMessage("File open error. File is probably in use somewere else.", MessageType.Error);
+                     Title = defaultTitle;
+                  }
+                  Title = $"Datasheets - {value.PartName}";
                }
+            }
+            else
+            {
+               Title = defaultTitle;
             }
             OnPropertyChanged();
          }
@@ -392,6 +425,16 @@ namespace DatasheetViewer.ViewModels
          }
       }
       #endregion
+
+      public bool IsEditorNOTOpen
+      {
+         get { return _IsEditorNOTOpen; }
+         set
+         {
+            _IsEditorNOTOpen = value;
+            OnPropertyChanged();
+         }
+      }
 
       #region Search Props
       public string SearchText

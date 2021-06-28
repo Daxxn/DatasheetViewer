@@ -30,11 +30,6 @@ namespace DatasheetViewer.Models
       #endregion
 
       #region - Methods
-      public void SaveEdits()
-      {
-         _datasheet.RenameFile();
-      }
-
       private string CreateTagString(IEnumerable<Tag> tags)
       {
          if (tags is null) return null;

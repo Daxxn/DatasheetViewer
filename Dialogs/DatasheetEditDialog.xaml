@@ -28,16 +28,15 @@
                 </Grid.RowDefinitions>
 
                 <Button Grid.Column="0" MinWidth="200" Click="Cancel_Click">Cancel</Button>
-                <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <Button
-                        MinWidth="100"
-                        Command="{Binding Path=SaveCmd}"
-                        ToolTip="Save and close. (Enter)"
-                    >
-                        Save
-                    </Button>
-                </StackPanel>
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Path=RootDir}"/>
+                <Button
+                    Grid.Column="2"
+                    MinWidth="200"
+                    Command="{Binding Path=SaveCmd}"
+                    ToolTip="Save and close. (Enter)"
+                >
+                    Save
+                </Button>
             </Grid>
         </Border>
 

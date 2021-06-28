@@ -57,6 +57,7 @@ namespace DatasheetViewer
          "PART_ZoomToolsSeparator_0",
       };
       private MainViewModel VM { get; set; }
+      public DatasheetEditDialog EditorWindow { get; private set; }
       private Settings AppSettings { get; set; } = Settings.AppSettings;
       public MainWindow()
       {
@@ -142,8 +143,17 @@ namespace DatasheetViewer
       private void Edit_Click(object sender, RoutedEventArgs e)
       {
          VM.EditDatasheetsCmd.Execute(null);
-         DatasheetEditDialog dialog = new();
-         dialog.ShowDialog();
+         EditorWindow = new();
+         EditorWindow.Closed += Edit_Close;
+         EditorWindow.Closed += VM.EditCompleted;
+         EditorWindow.Show();
+         VM.IsEditorNOTOpen = false;
+      }
+
+      private void Edit_Close(object sender, EventArgs e)
+      {
+         VM.IsEditorNOTOpen = true;
+         EditorWindow = null;
       }
 
       private void PDFView_PageSelected(object sender, PageSelectedEventArgs e)
