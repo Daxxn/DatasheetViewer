@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:DatasheetViewer.Views"
              xmlns:models="clr-namespace:DatasheetViewer.Models"
              xmlns:utils="clr-namespace:DatasheetViewer.Utils"
-             mc:Ignorable="d" Width="400">
+             mc:Ignorable="d" Width="300">
     <Border>
         <TabControl>
             <TabItem Header="Ohms Law">
@@ -25,7 +25,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Image Grid.Row="0" Grid.ColumnSpan="2" Width="400" Height="400" Source="\Icons\Ohms Law.jpg"/>
+                    <Image Grid.Row="0" Grid.ColumnSpan="2" Width="300" Height="300" Source="\Icons\Ohms Law.jpg"/>
                     <ComboBox
                         Name="CalcSelectorCombo"
                         Grid.Row="1"

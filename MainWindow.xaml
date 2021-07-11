@@ -178,6 +178,7 @@
                     Header="Datasheet"
                     Grid.Row="2"
                     ExpandDirection="Down"
+                    MaxWidth="400"
                 >
                     <Grid>
                         <Grid.RowDefinitions>
@@ -200,6 +201,8 @@
                         <TextBlock Grid.Row="4" Style="{StaticResource valueTitle}">Tags</TextBlock>
                         <ListView
                             Grid.Row="5"
+                            Height="30"
+                            VerticalAlignment="Top"
                             x:Name="DatasheetTagsView"
                             Background="#11ffffff"
                             ItemsSource="{Binding Path=SelectedDatasheet.Tags}"
@@ -237,7 +240,7 @@
                 IsBookmarkEnabled="False"
                 ItemSource="{Binding Path=Document}"
             />
-            <Expander Grid.Column="1" Header="Ohms Law" ExpandDirection="Left">
+            <Expander Grid.Column="1" Header="Utils" ExpandDirection="Left">
                 <views:BasicCalculatorsView/>
             </Expander>
         </Grid>
