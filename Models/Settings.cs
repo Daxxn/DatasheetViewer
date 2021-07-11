@@ -19,6 +19,7 @@ namespace DatasheetViewer.Models
       private int _autoScanInterval = 60;
       private int _messageInterval = 10;
       private bool _hideMessage = true;
+      private string _electCalcPath;
       #endregion
 
       #region - Constructors
@@ -123,6 +124,16 @@ namespace DatasheetViewer.Models
          set
          {
             _hideMessage = value;
+            OnPropertyChanged();
+         }
+      }
+
+      public string ElectricalCalculatorPath
+      {
+         get { return _electCalcPath; }
+         set
+         {
+            _electCalcPath = value;
             OnPropertyChanged();
          }
       }

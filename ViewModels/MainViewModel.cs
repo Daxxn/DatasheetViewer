@@ -13,6 +13,7 @@ using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace DatasheetViewer.ViewModels
 {
@@ -53,6 +54,8 @@ namespace DatasheetViewer.ViewModels
 
       private bool _IsEditorNOTOpen = true;
 
+      private Process _electCalcProcess;
+
       #region Command Bindings
       public Command EditDatasheetsCmd { get; init; }
       public Command OpenFolderCmd { get; init; }
@@ -61,6 +64,7 @@ namespace DatasheetViewer.ViewModels
       public Command SearchCmd { get; init; }
       public Command ClearSelectedCmd { get; init; }
       public Command FilterAscendingCmd { get; init; }
+      public Command RunElectCalcCmd { get; init; }
 
       public Command TestCmd { get; init; }
       #endregion
@@ -91,6 +95,7 @@ namespace DatasheetViewer.ViewModels
          SearchCmd = new(o => Search());
          ClearSelectedCmd = new(o => ClearSelected());
          FilterAscendingCmd = new(o => SwitchFilter());
+         RunElectCalcCmd = new(o => RunElectCalc());
 
          EditDatasheetsCmd = new(o => EditDatasheets());
 
@@ -105,6 +110,24 @@ namespace DatasheetViewer.ViewModels
       public void Test()
       {
          InitMessage("Test Message", MessageType.Error);
+      }
+
+      public void RunElectCalc()
+      {
+         if (File.Exists(AppSettings.ElectricalCalculatorPath))
+         {
+            if (ElectricalCalcProcess is null || ElectricalCalcProcess?.HasExited == true)
+            {
+               try
+               {
+                  ElectricalCalcProcess = Process.Start(AppSettings.ElectricalCalculatorPath);
+               }
+               catch (Exception e)
+               {
+                  InitMessage(e.Message, MessageType.Error);
+               }
+            }
+         }
       }
 
       private void EditDatasheets()
@@ -132,7 +155,7 @@ namespace DatasheetViewer.ViewModels
                   d =>
                      (
                         d.Tags is not null
-                        ? d.Tags.Any( t => t.Name == SearchText)
+                        ? d.Tags.Any( t => t.Name.ToLower() == SearchText.ToLower())
                         : false
                      ) 
                      ||
@@ -514,6 +537,17 @@ namespace DatasheetViewer.ViewModels
          get => !String.IsNullOrEmpty(SearchText) ? Visibility.Visible : Visibility.Collapsed;
       }
       #endregion
+
+
+      public Process ElectricalCalcProcess
+      {
+         get { return _electCalcProcess; }
+         set
+         {
+            _electCalcProcess = value;
+            OnPropertyChanged();
+         }
+      }
       #endregion
    }
 }

@@ -47,7 +47,9 @@
                 <TextBlock Text="{Binding Path=AppSettings.LastUsedPath}"/>
                 <CheckBox Content="Hide Message" ToolTip="Hide Message after the message time interval hase elapsed." IsChecked="{Binding Path=AppSettings.HideMessage}"/>
                 <TextBox Text="{Binding Path=AppSettings.MessageInterval, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Text="{Binding Path=AppSettings.ElectricalCalculatorPath, UpdateSourceTrigger=PropertyChanged}"/>
             </MenuItem>
+            <MenuItem Header="Calc" Command="{Binding Path=RunElectCalcCmd}"/>
             <!--<MenuItem Header="Test" Command="{Binding Path=TestCmd}"/>-->
         </Menu>
 
