@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DatasheetViewer"
         xmlns:pdf="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
+        xmlns:views="clr-namespace:DatasheetViewer.Views"
         mc:Ignorable="d"
         WindowState="Maximized"
         xmlns:utils="clr-namespace:DatasheetViewer.Utils"
@@ -237,7 +238,7 @@
                 ItemSource="{Binding Path=Document}"
             />
             <Expander Grid.Column="1" Header="Ohms Law" ExpandDirection="Left">
-                <Image Width="400" Height="400" Source="\Icons\Ohms Law.jpg"/>
+                <views:BasicCalculatorsView/>
             </Expander>
         </Grid>
 
