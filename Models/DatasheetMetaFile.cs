@@ -96,6 +96,18 @@ namespace DatasheetViewer.Models
          }
          return isChanged;
       }
+
+      public Datasheet SearchDatasheets(string path)
+      {
+         foreach (var ds in Datasheets)
+         {
+            if (ds.FilePath == path)
+            {
+               return ds;
+            }
+         }
+         return null;
+      }
       #endregion
 
       #region - Full Properties

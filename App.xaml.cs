@@ -25,6 +25,11 @@ namespace DatasheetViewer
       protected override void OnStartup(StartupEventArgs e)
       {
          Settings.Open();
+         Settings.AppSettings.ArgsDatasheet = null;
+         if (e.Args.Length > 0)
+         {
+            Settings.AppSettings.ArgsDatasheet = e.Args[0];
+         }
          base.OnStartup(e);
       }
    }

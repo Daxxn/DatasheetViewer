@@ -211,6 +211,26 @@ namespace DatasheetViewer.ViewModels
             }
             AppSettings.LastUsedPath = DatasheetFile.RootDirectory;
             InitMessage("Open Completed", MessageType.Finished);
+
+            if (AppSettings.ArgsDatasheet is not null)
+            {
+               var ds = DatasheetFile.SearchDatasheets(AppSettings.ArgsDatasheet);
+               if (ds is not null)
+               {
+                  SelectedDatasheet = ds;
+               }
+               else
+               {
+                  try
+                  {
+                     Document = new FileStream(AppSettings.ArgsDatasheet, FileMode.Open);
+                  }
+                  catch (Exception)
+                  {
+                     Document = null;
+                  }
+               }
+            }
          }
          catch (Exception e)
          {
